@@ -1,0 +1,5 @@
+node_modules
+test-server/*
+!test-server/server.properties
+!test-server/index.js
+!test-server/eula.txt
