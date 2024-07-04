@@ -77,6 +77,12 @@ function writeArray(value, types) {
     return buffer;
 }
 
+function writePosition(value) {
+    const buffer = Buffer.alloc(8);
+    buffer.writeBigInt64BE((BigInt(value.x) << BigInt(38)) | (BigInt(value.z) << BigInt(12)) | BigInt(value.y));
+    return buffer;
+}
+
 function writeDouble(value) {
     const buffer = Buffer.alloc(8);
     buffer.writeDoubleBE(value);
@@ -86,6 +92,12 @@ function writeDouble(value) {
 function writeFloat(value) {
     const buffer = Buffer.alloc(4);
     buffer.writeFloatBE(value);
+    return buffer;
+}
+
+function writeInt(value) {
+    const buffer = Buffer.alloc(4);
+    buffer.writeInt32BE(value);
     return buffer;
 }
 
@@ -172,6 +184,8 @@ module.exports = {
     writeArray,
     writeDouble,
     writeFloat,
+    writePosition,
+    writeInt,
 
     readVarInt,
     readString,

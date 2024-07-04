@@ -47,13 +47,15 @@ packetParser.onState("CONFIGURATION", () => {
     });
 
     packetParser.oncePacketId(0x03, () => {
-        packetParser.setState("PLAY");
         conn.write(packets.create("AcknowledgeFinishConfiguration"));
+        packetParser.setState("PLAY");
     });
 });
 
 packetParser.onceState("PLAY", () => {
-    console.log("Play!");
+    console.log("Play");
+
+    conn.write(packets.create("ChatMessage", "hellooo"));
 
     packetParser.onPacketId(0x26, packet => {
         const keepAliveId = types.readLong(packet.data).value;
@@ -61,32 +63,41 @@ packetParser.onceState("PLAY", () => {
         conn.write(packets.create("ServerboundKeepAlive", keepAliveId))
     });
 
+    packetParser.onPacketId(0x35, packet => {
+        const parsed = packets.parse("Ping", packet.data);
+        console.log("Received ping with ID:", parsed.id);
+        conn.write(packets.create("Pong", parsed.id));
+    });
+
     packetParser.onPacketId(0x3C, packet => {
         console.log("Got killed, respawning");
         conn.write(packets.create("ClientStatus", 0));
     });
 
-    packetParser.onPacketId(0x40, (packet, raw) => {
-        const parsed = packets.parse("SynchronizePlayerPosition", raw);
-        console.log("Confirming teleport for teleport ID:", parsed.teleportId);
-        conn.write(packets.create("ConfirmTeleportation", parsed.teleportId))
-        // console.log(parsed);
-        x = parsed.x;
-        y = parsed.y;
-        z = parsed.z;
-    });
+    // let x;
+    // let y;
+    // let z;
 
-    // TODO: worked once then never again?
-    // packetParser.oncePacketId(0x40, (packet, raw) => {
+    // packetParser.onPacketId(0x40, packet => {
+    //     const parsed = packets.parse("SynchronizePlayerPosition", packet.data);
+    //     console.log("Confirming teleport for teleport ID:", parsed.teleportId);
+    //     conn.write(packets.create("ConfirmTeleportation", parsed.teleportId));
+    //     // TODO: this assumes absolute positioning, but relative is possible i think
+    //     x = parsed.x;
+    //     y = parsed.y;
+    //     z = parsed.z;
+    // });
+
+    // packetParser.oncePacketId(0x40, packet => {
     //     console.log("Got synchronize player position, starting movement");
 
     //     setInterval(() => {
-    //         x += 0.5;
-
+    //         y += 0.5;
     //         console.log("Moving to XYZ:", x, y, z);
     //         conn.write(packets.create("SetPlayerPosition", x, y, z, true));
-    //     }, 200);
+    //     }, 250);
     // });
+
 });
 
 // packetParser.onParser("packet", console.log)
