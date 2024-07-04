@@ -12,7 +12,6 @@ const host = "localhost";
 const port = 25420;
 
 proxyServer.on("connection", socket => {
-
     const serverConnection = net.createConnection({ host, port });
 
     socket.on("data", data => {
@@ -21,9 +20,9 @@ proxyServer.on("connection", socket => {
         if (dataLimit && proxiedData >= dataLimit) serverConnection.end();
         try {
             const parsedPacket = parsePacket(data);
-            // console.log("[CLIENT]", parsedPacket);
+            console.log("[SERVERBOUND]", parsedPacket);
         } catch (err) {
-            console.log("[CLIENT]", "Failed to parse!", data)
+            // console.log("[SERVERBOUND]", "Failed to parse!", data)
         }
     });
     socket.on("error", () => { });
@@ -35,9 +34,9 @@ proxyServer.on("connection", socket => {
         if (dataLimit && proxiedData >= dataLimit) serverConnection.end();
         try {
             const parsedPacket = parsePacket(data);
-            // console.log("[SERVER]", parsedPacket);
+            // console.log("[CLIENTBOUND]", parsedPacket);
         } catch (err) {
-            console.log("[SERVER]", "Failed to parse!", data)
+            // console.log("[CLIENTBOUND]", "Failed to parse!", data)
         }
     });
     serverConnection.on("error", err => { });

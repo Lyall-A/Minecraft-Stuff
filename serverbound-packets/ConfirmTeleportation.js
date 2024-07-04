@@ -1,16 +1,16 @@
 const types = require("../types");
 
-class ChatCommand {
-    constructor(command) {   
-        this._command = command;    
+class ConfirmTeleportation {
+    constructor(teleportId) {   
+        this._teleportId = teleportId; 
     }
 
-    packetId = () => Buffer.from([0x04]);
+    packetId = () => Buffer.from([0x00]);
 
-    command = () => types.writeString(this._command, 32767);
+    teleportId = () => types.writeVarInt(this._teleportId);
 
     data = () => Buffer.concat([
-        this.command()
+        this.teleportId()
     ]);
 
     length = () => types.writeVarInt(this.packetId().length + this.data().length);
@@ -22,4 +22,4 @@ class ChatCommand {
     ]);
 }
 
-module.exports = ChatCommand;
+module.exports = ConfirmTeleportation;

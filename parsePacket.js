@@ -12,9 +12,7 @@ function parsePacket(packet) {
     return {
         length,
         packetId,
-        data,
-        // dataString: (() => { try { return types.readString(data).value } catch (err) { return err } })(),
-        // dataJson: (() => { try { return JSON.parse(types.readString(data).value) } catch (err) { return err } })()
+        data
     }
 }
 

@@ -62,6 +62,33 @@ function writeByteArray(value, maxLength) {
     return Buffer.from(value);
 }
 
+function writeArray(value, types) {
+    let buffer = Buffer.alloc(0);
+    for (let i in value) {
+        for (let x in types) {
+            buffer = Buffer.concat([
+                buffer,
+
+                types[x] == "string" ? writeString(types.length > 1 ? value[i][x] : value[i]) :
+                Buffer.alloc(0)
+            ]);
+        }
+    }
+    return buffer;
+}
+
+function writeDouble(value) {
+    const buffer = Buffer.alloc(8);
+    buffer.writeDoubleBE(value);
+    return buffer;
+}
+
+function writeFloat(value) {
+    const buffer = Buffer.alloc(4);
+    buffer.writeFloatBE(value);
+    return buffer;
+}
+
 // Read data types
 function readVarInt(buffer, offset = 0) {
     let result = 0;
@@ -85,11 +112,11 @@ function readVarInt(buffer, offset = 0) {
 }
 
 function readInt(buffer, offset = 0) {
-    return buffer.readInt32BE(offset);
+    return { value: buffer.readInt32BE(offset), size: 4 };
 }
 
 function readBoolean(buffer, offset = 0) {
-    return buffer[offset] == 0x00 ? false : true;
+    return { value: buffer[offset] == 0x00 ? false : true, size: 1 };
 }
 
 function readString(buffer, offset = 0) {
@@ -99,7 +126,36 @@ function readString(buffer, offset = 0) {
 }
 
 function readLong(buffer, offset = 0) {
-    return buffer.readBigInt64BE(offset);
+    return { value: buffer.readBigInt64BE(offset), size: 8 };
+}
+
+function readArray(buffer, length, types, offset = 0) {
+    const array = [];
+    let arrayOffset = 0;
+    for (let i = 0; i < length; i++) {
+        const subArray = [];
+        for (let x in types) {
+            subArray.push(
+                types[x] == "string" ? readString(buffer, offset + arrayOffset) :
+                undefined
+            );
+            arrayOffset += subArray[x].size;
+        }
+        subArray.length > 1 ? array.push(subArray) : array.push(...subArray);
+    }
+    return { value: array, size: arrayOffset };
+}
+
+function readByte(buffer, offset = 0) {
+    return { value: buffer[offset], size: 1 };
+}
+
+function readFloat(buffer, offset = 0) {
+    return { value: buffer.readFloatBE(offset), size: 4 }
+}
+
+function readDouble(buffer, offset = 0) {
+    return { value: buffer.readDoubleBE(offset), size: 8 }
 }
 
 module.exports = {
@@ -113,10 +169,17 @@ module.exports = {
     writeLong,
     writeFixedBitSet,
     writeByteArray,
+    writeArray,
+    writeDouble,
+    writeFloat,
 
     readVarInt,
     readString,
     readLong,
     readInt,
-    readBoolean
+    readBoolean,
+    readArray,
+    readByte,
+    readFloat,
+    readDouble
 }

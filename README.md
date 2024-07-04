@@ -1,0 +1,1 @@
+this is my attempt at making a bot player or even a basic server using the minecraft protocol docs at https://wiki.vg/Main_Page
