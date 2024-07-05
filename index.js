@@ -74,29 +74,30 @@ packetParser.onceState("PLAY", () => {
         conn.write(packets.create("ClientStatus", 0));
     });
 
-    // let x;
-    // let y;
-    // let z;
+    let x = 0;
+    let y = 0;
+    let z = 0;
 
-    // packetParser.onPacketId(0x40, packet => {
-    //     const parsed = packets.parse("SynchronizePlayerPosition", packet.data);
-    //     console.log("Confirming teleport for teleport ID:", parsed.teleportId);
-    //     conn.write(packets.create("ConfirmTeleportation", parsed.teleportId));
-    //     // TODO: this assumes absolute positioning, but relative is possible i think
-    //     x = parsed.x;
-    //     y = parsed.y;
-    //     z = parsed.z;
-    // });
+    packetParser.onPacketId(0x40, packet => {
+        const parsed = packets.parse("SynchronizePlayerPosition", packet.data);
+        console.log("Confirming teleport for teleport ID:", parsed.teleportId);
+        conn.write(packets.create("ConfirmTeleportation", parsed.teleportId));
+        x = parsed.flags & 0x01 ? x + parsed.x : parsed.x;
+        y = parsed.flags & 0x02 ? y + parsed.y : parsed.y;
+        z = parsed.flags & 0x04 ? z + parsed.z : parsed.z;
+    });
 
-    // packetParser.oncePacketId(0x40, packet => {
-    //     console.log("Got synchronize player position, starting movement");
+    packetParser.oncePacketId(0x40, packet => {
+        console.log("Got synchronize player position, starting movement");
 
-    //     setInterval(() => {
-    //         y += 0.5;
-    //         console.log("Moving to XYZ:", x, y, z);
-    //         conn.write(packets.create("SetPlayerPosition", x, y, z, true));
-    //     }, 250);
-    // });
+        setInterval(() => {
+            x += 0.25;
+            // y += 0.25;
+            z += 0.25;
+            console.log("Moving to XYZ:", x, y, z);
+            conn.write(packets.create("SetPlayerPosition", x, y, z, true));
+        }, 100);
+    });
 
 });
 
