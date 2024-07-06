@@ -10,7 +10,7 @@ class UpdateSign {
         this._line4 = line4;    
     }
 
-    packetId = () => Buffer.from([0x35]);
+    packetId = Buffer.from([0x35]);
 
     location = () => types.writePosition(this._location);
     isFrontText = () => types.writeBoolean(this._isFrontText);
@@ -28,11 +28,11 @@ class UpdateSign {
         this.line4()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

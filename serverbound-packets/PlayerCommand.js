@@ -7,7 +7,7 @@ class PlayerCommand {
         this._jumpBoost = jumpBoost;
     }
 
-    packetId = () => Buffer.from([0x25]);
+    packetId = Buffer.from([0x25]);
 
     entityId = () => types.writeVarInt(this._entityId);
     actionId = () => types.writeVarInt(this._actionId);
@@ -19,11 +19,11 @@ class PlayerCommand {
         this.jumpBoost()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

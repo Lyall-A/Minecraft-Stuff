@@ -5,7 +5,7 @@ class ConfirmTeleportation {
         this._teleportId = teleportId; 
     }
 
-    packetId = () => Buffer.from([0x00]);
+    packetId = Buffer.from([0x00]);
 
     teleportId = () => types.writeVarInt(this._teleportId);
 
@@ -13,11 +13,11 @@ class ConfirmTeleportation {
         this.teleportId()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

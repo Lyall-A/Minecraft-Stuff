@@ -5,7 +5,7 @@ class ServerboundKeepAlive {
         this._keepAliveId = keepAliveId;
     }
 
-    packetId = () => Buffer.from([0x18]);
+    packetId = Buffer.from([0x18]);
 
     keepAliveId = () => types.writeLong(this._keepAliveId);
 
@@ -13,11 +13,11 @@ class ServerboundKeepAlive {
         this.keepAliveId()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

@@ -6,7 +6,7 @@ class LoginStart {
         this._playerUuid = playerUuid;
     }
 
-    packetId = () => Buffer.from([0x00]);
+    packetId = Buffer.from([0x00]);
 
     name = () => types.writeString(this._name, 16);
     playerUuid = () => types.writeUuid(this._playerUuid);
@@ -16,11 +16,11 @@ class LoginStart {
         this.playerUuid()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

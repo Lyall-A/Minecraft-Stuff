@@ -5,7 +5,7 @@ class SwingArm {
         this._hand = hand;
     }
 
-    packetId = () => Buffer.from([0x36]);
+    packetId = Buffer.from([0x36]);
 
     hand = () => types.writeVarInt(this._hand);
 
@@ -13,11 +13,11 @@ class SwingArm {
         this.hand()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

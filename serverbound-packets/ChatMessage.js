@@ -12,7 +12,7 @@ class ChatMessage {
         // this._acknowledged = acknowledged;
     }
 
-    packetId = () => Buffer.from([0x06]);
+    packetId = Buffer.from([0x06]);
 
     message = () => types.writeString(this._message, 256);
     timestamp = () => types.writeLong(this._timestamp);
@@ -32,11 +32,11 @@ class ChatMessage {
         this.acknowledged(),
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

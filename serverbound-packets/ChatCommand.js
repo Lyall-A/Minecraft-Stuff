@@ -5,7 +5,7 @@ class ChatCommand {
         this._command = command;    
     }
 
-    packetId = () => Buffer.from([0x04]);
+    packetId = Buffer.from([0x04]);
 
     command = () => types.writeString(this._command, 32767);
 
@@ -13,11 +13,11 @@ class ChatCommand {
         this.command()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

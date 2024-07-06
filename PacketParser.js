@@ -9,6 +9,7 @@ class PacketParser {
 
         this._state = state;
         this._boundTo = boundTo;
+        this._compressionThreshold = -1;
     }
 
     setState(state) {
@@ -16,11 +17,17 @@ class PacketParser {
         this.stateCall(state);
     };
 
+    setCompression(threshold) {
+        this._compressionThreshold = threshold;
+    }
+
     parse(packet) {
         try {
-            const parsed = parsePacket(packet);
-            this.parserCall("packet", parsed);
+            const parsed = parsePacket(packet, this._compressionThreshold);
+            this.parserCall("parsed", parsed);
+            this.parserCall("packet", packet);
             this.packetIdCall(parsed, packet);
+            return parsed;
         } catch (err) {
             if (this.parserListeners["error"]) this.parserCall("error", err); else throw err;
         }

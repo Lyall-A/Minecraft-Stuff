@@ -8,7 +8,7 @@ class Handshake {
         this._nextState = nextState;
     }
 
-    packetId = () => Buffer.from([0x00]);
+    packetId = Buffer.from([0x00]);
 
     protocolVersion = () => types.writeVarInt(this._protocolVersion);
     serverAddress = () => types.writeString(this._serverAddress, 255);
@@ -22,11 +22,11 @@ class Handshake {
         this.nextState()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

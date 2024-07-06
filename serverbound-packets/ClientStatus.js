@@ -5,7 +5,7 @@ class ClientStatus {
         this._actionId = actionId;
     }
 
-    packetId = () => Buffer.from([0x09]);
+    packetId = Buffer.from([0x09]);
 
     actionId = () => types.writeVarInt(this._actionID);
 
@@ -13,11 +13,11 @@ class ClientStatus {
         this.actionId()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

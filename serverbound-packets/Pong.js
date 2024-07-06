@@ -5,7 +5,7 @@ class Pong {
         this._id = id;
     }
 
-    packetId = () => Buffer.from([0x27]);
+    packetId = Buffer.from([0x27]);
 
     id = () => types.writeInt(this._id);
 
@@ -13,11 +13,11 @@ class Pong {
         this.id()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

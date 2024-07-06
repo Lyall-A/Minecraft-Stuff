@@ -7,7 +7,7 @@ class ServerboundKnownPacks {
         this._knownPacks = knownPacks;
     }
 
-    packetId = () => Buffer.from([0x07]);
+    packetId = Buffer.from([0x07]);
 
     knownPackCount = () => types.writeVarInt(this._knownPackCount);
     knownPacks = () => types.writeArray(this._knownPacks.value, this._knownPacks.types);
@@ -18,11 +18,11 @@ class ServerboundKnownPacks {
         this.knownPacks()
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }

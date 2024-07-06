@@ -10,7 +10,7 @@ class SetPlayerPositionAndRotation {
         this._onGround = onGround;
     }
 
-    packetId = () => Buffer.from([0x1B]);
+    packetId = Buffer.from([0x1B]);
 
     x = () => types.writeDouble(this._x);
     feetY = () => types.writeDouble(this._feetY);
@@ -28,11 +28,11 @@ class SetPlayerPositionAndRotation {
         this.onGround(),
     ]);
 
-    length = () => types.writeVarInt(this.packetId().length + this.data().length);
+    length = () => types.writeVarInt(this.packetId.length + this.data().length);
 
     buffer = () => Buffer.concat([
         this.length(),
-        this.packetId(),
+        this.packetId,
         this.data()
     ]);
 }
