@@ -17,7 +17,22 @@ function parse(type, data) {
     return parsedPacket.parse();
 }
 
+// TODO: complete
+const ids = {
+    HANDSHAKE: 0x00,
+    STATUS_RESPONSE: 0x00,
+    PING_RESPONSE: 0x01,
+    STATUS_REQUEST: 0x00,
+    PING_REQUEST: 0x01,
+    DISCONNECT_LOGIN: 0x00,
+    ENCRYPTION_REQUEST: 0x01,
+    LOGIN_SUCCESS: 0x02,
+    SET_COMPRESSION: 0x03,
+    LOGIN_PLUGIN_REQUEST: 0x04
+}
+
 module.exports = {
     create,
-    parse
+    parse,
+    ids
 };

@@ -8,7 +8,8 @@ const packets = require("./packets");
 const PacketCapturer = require("./PacketCapturer");
 const PacketParser = require("./PacketParser");
 
-const host = "localhost";
+const host = "192.168.1.217";
+// const host = "localhost";
 const port = 25420;
 const username = "notch"
 
@@ -34,7 +35,7 @@ packetParser.onceState("LOGIN", () => {
         console.log("Login");
         conn.write(Buffer.concat([
             packets.create("LoginAcknowledged"),
-            packets.create("ClientInformation")
+            packets.create("ClientInformationConfiguration")
         ]));
         packetParser.setState("CONFIGURATION");
     });
@@ -55,7 +56,13 @@ packetParser.onState("CONFIGURATION", () => {
 packetParser.onceState("PLAY", () => {
     console.log("Play");
 
-    conn.write(packets.create("ChatMessage", "hellooo"));
+    conn.write(packets.create("ChatMessage", "hi im notch"));
+    
+    packetParser.onPacketId(0x2B, packet => {
+        const parsed = packets.parse("Login", packet.data);
+        console.log("Entity ID:", parsed.entityId);
+        conn.write(packets.create("PlayerCommand", parsed.entityId, 0));
+    });
 
     packetParser.onPacketId(0x26, packet => {
         const keepAliveId = types.readLong(packet.data).value;
@@ -66,7 +73,7 @@ packetParser.onceState("PLAY", () => {
     packetParser.onPacketId(0x35, packet => {
         const parsed = packets.parse("Ping", packet.data);
         console.log("Received ping with ID:", parsed.id);
-        conn.write(packets.create("Pong", parsed.id));
+        conn.write(packets.create("PongPlay", parsed.id));
     });
 
     packetParser.onPacketId(0x3C, packet => {
@@ -74,31 +81,30 @@ packetParser.onceState("PLAY", () => {
         conn.write(packets.create("ClientStatus", 0));
     });
 
-    let x = 0;
-    let y = 0;
-    let z = 0;
+    // let x = 0;
+    // let y = 0;
+    // let z = 0;
 
-    packetParser.onPacketId(0x40, packet => {
-        const parsed = packets.parse("SynchronizePlayerPosition", packet.data);
-        console.log("Confirming teleport for teleport ID:", parsed.teleportId);
-        conn.write(packets.create("ConfirmTeleportation", parsed.teleportId));
-        x = parsed.flags & 0x01 ? x + parsed.x : parsed.x;
-        y = parsed.flags & 0x02 ? y + parsed.y : parsed.y;
-        z = parsed.flags & 0x04 ? z + parsed.z : parsed.z;
-    });
+    // packetParser.onPacketId(0x40, packet => {
+    //     const parsed = packets.parse("SynchronizePlayerPosition", packet.data);
+    //     console.log("Confirming teleport for teleport ID:", parsed.teleportId);
+    //     conn.write(packets.create("ConfirmTeleportation", parsed.teleportId));
+    //     x = parsed.flags & 0x01 ? x + parsed.x : parsed.x;
+    //     y = parsed.flags & 0x02 ? y + parsed.y : parsed.y;
+    //     z = parsed.flags & 0x04 ? z + parsed.z : parsed.z;
+    // });
 
-    packetParser.oncePacketId(0x40, packet => {
-        console.log("Got synchronize player position, starting movement");
+    // packetParser.oncePacketId(0x40, packet => {
+    //     console.log("Got synchronize player position, starting movement");
 
-        setInterval(() => {
-            x += 0.25;
-            // y += 0.25;
-            z += 0.25;
-            console.log("Moving to XYZ:", x, y, z);
-            conn.write(packets.create("SetPlayerPosition", x, y, z, true));
-        }, 100);
-    });
-
+    //     setInterval(() => {
+    //         x += 0.25;
+    //         // y += 0.25;
+    //         z += 0.25;
+    //         console.log("Moving to XYZ:", x, y, z);
+    //         conn.write(packets.create("SetPlayerPosition", x, y, z, true));
+    //     }, 100);
+    // });
 });
 
 // packetParser.onParser("packet", console.log)
