@@ -4,4 +4,5 @@ this is my attempt at making a bot player or even a basic server using the minec
 
 ## stuff todo
 ~~compression~~
+
 online mode?!?!?
